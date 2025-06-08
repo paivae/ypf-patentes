@@ -1,0 +1,439 @@
+/* ========================================
+   ESTILOS YPF V2 - MOBILE FIRST
+======================================== */
+
+:root {
+    --ypf-blue: #0033A0;
+    --ypf-blue-light: #1a4cb8;
+    --ypf-blue-dark: #002080;
+    --ypf-gold: #FFD700;
+    --ypf-gold-dark: #DAA520;
+    --success: #28a745;
+    --danger: #dc3545;
+    --warning: #ffc107;
+    --light-gray: #f8f9fa;
+    --dark-gray: #6c757d;
+    --border-radius: 12px;
+    --shadow: 0 2px 10px rgba(0, 51, 160, 0.1);
+    --shadow-hover: 0 4px 20px rgba(0, 51, 160, 0.15);
+}
+
+/* ========================================
+   RESET Y BASE
+======================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    padding-top: 76px;
+}
+
+/* ========================================
+   COLORES YPF
+======================================== */
+
+.bg-ypf {
+    background: linear-gradient(135deg, var(--ypf-blue) 0%, var(--ypf-blue-light) 100%) !important;
+}
+
+.text-ypf {
+    color: var(--ypf-blue) !important;
+}
+
+.btn-ypf {
+    background: linear-gradient(135deg, var(--ypf-blue) 0%, var(--ypf-blue-light) 100%);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+}
+
+.btn-ypf:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+    color: white;
+}
+
+.btn-ypf:focus,
+.btn-ypf:active {
+    color: white !important;
+    box-shadow: var(--shadow-hover);
+}
+
+/* ========================================
+   TARJETAS DE ESTADÍSTICAS
+======================================== */
+
+.stat-card {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 20px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    border-left: 4px solid var(--ypf-blue);
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.stat-card-gold {
+    border-left-color: var(--ypf-gold);
+}
+
+.stat-card-danger {
+    border-left-color: var(--danger);
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--ypf-blue);
+    line-height: 1;
+}
+
+.stat-card-gold .stat-number {
+    color: var(--ypf-gold-dark);
+}
+
+.stat-card-danger .stat-number {
+    color: var(--danger);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--dark-gray);
+    font-weight: 500;
+    margin-top: 5px;
+}
+
+/* ========================================
+   CARDS DE PATENTES
+======================================== */
+
+.patente-card {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.patente-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--ypf-blue);
+    transition: all 0.3s ease;
+}
+
+.patente-card.patente-dorada::before {
+    background: linear-gradient(90deg, var(--ypf-gold) 0%, var(--ypf-gold-dark) 100%);
+}
+
+.patente-card.patente-inexistente {
+    opacity: 0.6;
+    background: #f8f8f8;
+}
+
+.patente-card.patente-inexistente::before {
+    background: var(--danger);
+}
+
+.patente-card.patente-validada {
+    opacity: 0.8;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.patente-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--ypf-blue);
+}
+
+.patente-card.patente-dorada:hover {
+    border-color: var(--ypf-gold);
+}
+
+.patente-numero {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--ypf-blue);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+
+.patente-card.patente-dorada .patente-numero {
+    color: var(--ypf-gold-dark);
+    text-shadow: 0 1px 2px rgba(218, 165, 32, 0.3);
+}
+
+.patente-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.validaciones-badge {
+    background: var(--ypf-blue);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.patente-card.patente-dorada .validaciones-badge {
+    background: var(--ypf-gold-dark);
+    color: white;
+}
+
+.estado-badge {
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.estado-badge.inexistente {
+    background: var(--danger);
+    color: white;
+}
+
+.estado-badge.dorado {
+    background: var(--ypf-gold);
+    color: var(--ypf-blue);
+}
+
+/* ========================================
+   BOTÓN FLOTANTE (MOBILE)
+======================================== */
+
+.btn-floating {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, var(--ypf-blue) 0%, var(--ypf-blue-light) 100%);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0, 51, 160, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.btn-floating:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 51, 160, 0.4);
+    color: white;
+}
+
+/* ========================================
+   MODALES
+======================================== */
+
+.modal-content {
+    border-radius: var(--border-radius);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border: none;
+}
+
+.modal-header {
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    border-bottom: none;
+}
+
+.modal-footer {
+    border-top: none;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+}
+
+/* ========================================
+   FORMULARIOS
+======================================== */
+
+.form-control {
+    border-radius: var(--border-radius);
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--ypf-blue);
+    box-shadow: 0 0 0 0.2rem rgba(0, 51, 160, 0.25);
+}
+
+.form-control-lg {
+    padding: 12px 16px;
+    font-size: 1.1rem;
+}
+
+/* ========================================
+   ALERTAS Y TOASTS
+======================================== */
+
+.toast {
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+
+.alert {
+    border-radius: 0;
+    border: none;
+    margin-bottom: 0;
+}
+
+/* ========================================
+   ANIMACIONES
+======================================== */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.pulse {
+    animation: pulse 0.6s ease-in-out;
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+/* Mobile Small */
+@media (max-width: 576px) {
+    body {
+        padding-top: 70px;
+    }
+    
+    .container-fluid {
+        padding: 0 15px;
+    }
+    
+    .stat-card {
+        padding: 15px;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+    }
+    
+    .patente-card {
+        padding: 15px;
+    }
+    
+    .patente-numero {
+        font-size: 1.3rem;
+    }
+    
+    .btn-floating {
+        bottom: 15px;
+        right: 15px;
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+    }
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+    .patente-card {
+        padding: 24px;
+    }
+    
+    .stat-card {
+        padding: 24px;
+    }
+}
+
+/* Desktop */
+@media (min-width: 992px) {
+    .container-fluid {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+}
+
+/* ========================================
+   UTILITIES
+======================================== */
+
+.text-shadow {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.border-ypf {
+    border-color: var(--ypf-blue) !important;
+}
+
+.bg-gradient-ypf {
+    background: linear-gradient(135deg, var(--ypf-blue) 0%, var(--ypf-blue-light) 100%);
+}
+
+/* Loading spinner personalizado */
+.spinner-border.text-ypf {
+    color: var(--ypf-blue) !important;
+}
+
+/* Mejoras de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Dark mode support (futuro) */
+@media (prefers-color-scheme: dark) {
+    /* Preparado para modo oscuro */
+} 
