@@ -157,9 +157,11 @@ body {
     background: var(--danger);
 }
 
-.patente-card.patente-validada {
-    opacity: 0.8;
+.patente-card.patente-validada,
+.patente-card.patente-vista {
+    opacity: 0.6;
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    transform: scale(0.98);
 }
 
 .patente-card:hover {
@@ -209,22 +211,18 @@ body {
     color: white;
 }
 
-.estado-badge {
-    padding: 4px 8px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
+.inexistente-badge {
+    background: var(--danger) !important;
+    color: white !important;
 }
 
-.estado-badge.inexistente {
-    background: var(--danger);
-    color: white;
+.visto-badge {
+    background: var(--dark-gray) !important;
+    color: white !important;
+    font-size: 0.7rem !important;
 }
 
-.estado-badge.dorado {
-    background: var(--ypf-gold);
-    color: var(--ypf-blue);
-}
+/* Estado badges ya no se usan - limpieza */
 
 /* ========================================
    BOTÓN FLOTANTE (MOBILE)
@@ -356,11 +354,11 @@ body {
     }
     
     .container-fluid {
-        padding: 0 15px;
+        padding: 0 8px 60px 8px; /* Agregado padding bottom para espacio final */
     }
     
     .stat-card {
-        padding: 15px;
+        padding: 10px 4px;
     }
     
     .stat-number {
@@ -381,6 +379,47 @@ body {
         width: 50px;
         height: 50px;
         font-size: 1.3rem;
+    }
+    
+    /* Cards de patentes: ocupan fila completa en mobile */
+    #gridPatentes .col-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    
+    #gridPatentes {
+        gap: 12px;
+        padding-bottom: 40px; /* Padding bottom reducido bajo las patentes */
+    }
+    
+    /* Stats cards con flexbox para distribución inteligente */
+    .row.mb-4 {
+        display: flex !important;
+        flex-wrap: nowrap;
+        gap: 4px;
+        margin: 0 -4px 1.5rem -4px;
+    }
+    
+    .row.mb-4 .col-6.col-md-3 {
+        flex: 1;
+        min-width: 0;
+        max-width: none;
+    }
+    
+    /* Ajustar contenido de stats cards en mobile */
+    .stat-number {
+        font-size: 1.1rem;
+        line-height: 1.1;
+        margin-bottom: 4px;
+    }
+    
+    .stat-label {
+        font-size: 0.7rem;
+        line-height: 1.1;
+        word-break: keep-all;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 }
 

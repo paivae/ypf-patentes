@@ -107,6 +107,29 @@ function cargarPatentesValidadas() {
     }
 }
 
+// Guardar estados "vista" de patentes
+function guardarPatentesVistas() {
+    try {
+        const vistas = patentes.filter(p => p.vista).map(p => p.patente);
+        localStorage.setItem('ypf_patentes_vistas', JSON.stringify(vistas));
+    } catch (error) {
+        console.error('Error guardando vistas:', error);
+    }
+}
+
+// Cargar estados "vista" de patentes
+function cargarPatentesVistas() {
+    try {
+        const vistas = localStorage.getItem('ypf_patentes_vistas');
+        if (vistas) {
+            return new Set(JSON.parse(vistas));
+        }
+    } catch (error) {
+        console.error('Error cargando vistas:', error);
+    }
+    return new Set();
+}
+
 // ========================================
 //        COMUNICACIÓN CON GOOGLE SHEETS
 // ========================================
@@ -396,7 +419,17 @@ async function marcarInexistente() {
     if (!patente) return;
 
     // Actualizar localmente
+    patente.marcasInexistente = (patente.marcasInexistente || 0) + 1;
     patente.inexistente = true;
+    patente.vista = true; // Marcar como vista para opacar y enviar al fondo
+    
+    // También agregar a patentes validadas para consistencia visual
+    patentesValidadas.add(patente.patente);
+    guardarPatentesValidadas();
+    
+    // Guardar estado vista
+    guardarPatentesVistas();
+    
     guardarPatentesLocal();
     renderizarPatentes();
     actualizarEstadisticas();
@@ -404,10 +437,15 @@ async function marcarInexistente() {
     // Intentar actualizar en servidor
     if (isOnline) {
         try {
-            await ejecutarAccionEnServidor({
+            const resultado = await ejecutarAccionEnServidor({
                 accion: 'marcarInexistente',
                 patente: patenteSeleccionada
             });
+            
+            // Actualizar contador si se recibe del servidor
+            if (resultado.marcasInexistente) {
+                patente.marcasInexistente = resultado.marcasInexistente;
+            }
         } catch (error) {
             console.error('Error marcando inexistente en servidor:', error);
             agregarAColaOffline({
@@ -446,8 +484,16 @@ function renderizarPatentes() {
     
     mensajeSin.style.display = 'none';
     
-    // Ordenar patentes: doradas primero, luego por validaciones
+    // Ordenar patentes: no vistas primero, luego vistas al final
     const patentesOrdenadas = [...patentes].sort((a, b) => {
+        const aVista = patentesValidadas.has(a.patente) || a.vista;
+        const bVista = patentesValidadas.has(b.patente) || b.vista;
+        
+        // Primero separar por estado de vista (validadas o inexistentes marcadas)
+        if (aVista && !bVista) return 1;  // a vista va al final
+        if (!aVista && bVista) return -1; // b vista va al final
+        
+        // Dentro del mismo grupo, ordenar por: doradas primero, luego por validaciones
         if (a.esDorado && !b.esDorado) return -1;
         if (!a.esDorado && b.esDorado) return 1;
         return b.validaciones - a.validaciones;
@@ -457,12 +503,15 @@ function renderizarPatentes() {
         const clases = ['patente-card'];
         
         if (patente.esDorado) clases.push('patente-dorada');
-        if (patente.inexistente) clases.push('patente-inexistente');
+        if (patente.marcasInexistente && patente.marcasInexistente > 0) clases.push('patente-inexistente');
         if (patentesValidadas.has(patente.patente)) clases.push('patente-validada');
+        if (patente.vista) clases.push('patente-vista');
         
-        const estadoBadge = patente.inexistente ? 
-            '<span class="estado-badge inexistente">Inexistente</span>' :
-            patente.esDorado ? '<span class="estado-badge dorado">Dorado</span>' : '';
+        const estadoBadge = (patente.marcasInexistente && patente.marcasInexistente > 0) ? 
+            `<span class="validaciones-badge inexistente-badge"><i class="bi bi-x-circle"></i> ${patente.marcasInexistente}</span>` : '';
+        
+        const vistoBadge = patente.vista ? 
+            `<span class="validaciones-badge visto-badge"><i class="bi bi-eye"></i> Visto</span>` : '';
         
         return `
             <div class="col-6 col-md-4 col-lg-3">
@@ -474,6 +523,7 @@ function renderizarPatentes() {
                             ${patente.validaciones}
                         </span>
                         ${estadoBadge}
+                        ${vistoBadge}
                     </div>
                 </div>
             </div>
@@ -493,7 +543,7 @@ function actualizarEstadisticas() {
     const total = patentes.length;
     const validacionesTotales = patentes.reduce((sum, p) => sum + p.validaciones, 0);
     const doradas = patentes.filter(p => p.esDorado).length;
-    const inexistentes = patentes.filter(p => p.inexistente).length;
+    const inexistentes = patentes.filter(p => p.marcasInexistente && p.marcasInexistente > 0).length;
     
     document.getElementById('totalPatentes').textContent = total;
     document.getElementById('validacionesTotales').textContent = validacionesTotales;
@@ -546,11 +596,33 @@ document.addEventListener('DOMContentLoaded', function() {
     // Cargar patentes validadas localmente
     patentesValidadas = cargarPatentesValidadas();
     
+    // Cargar estados vista
+    const patentesVistas = cargarPatentesVistas();
+    
     // Verificar conexión inicial
     verificarConexion();
     
     // Cargar patentes
     cargarPatentesDesdeSheets();
+    
+    // Sincronizar estados vista después de cargar patentes
+    setTimeout(() => {
+        patentes.forEach(patente => {
+            // Restaurar estado vista si estaba guardado
+            if (patentesVistas.has(patente.patente)) {
+                patente.vista = true;
+                patentesValidadas.add(patente.patente);
+            }
+            // O si tiene marcas inexistentes pero no está marcado como vista
+            else if (patente.marcasInexistente && patente.marcasInexistente > 0) {
+                patente.vista = true;
+                patentesValidadas.add(patente.patente);
+            }
+        });
+        guardarPatentesValidadas();
+        guardarPatentesVistas();
+        renderizarPatentes();
+    }, 1000);
     
     // Configurar formulario de patente
     const patenteInput = document.getElementById('patente');
