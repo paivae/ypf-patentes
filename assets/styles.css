@@ -1,6 +1,4 @@
-/* ========================================
-   ESTILOS YPF V2 - MOBILE FIRST
-======================================== */
+
 
 :root {
     --ypf-blue: #0033A0;
@@ -18,9 +16,7 @@
     --shadow-hover: 0 4px 20px rgba(0, 51, 160, 0.15);
 }
 
-/* ========================================
-   RESET Y BASE
-======================================== */
+
 
 * {
     box-sizing: border-box;
@@ -33,9 +29,7 @@ body {
     padding-top: 76px;
 }
 
-/* ========================================
-   COLORES YPF
-======================================== */
+
 
 .bg-ypf {
     background: linear-gradient(135deg, var(--ypf-blue) 0%, var(--ypf-blue-light) 100%) !important;
@@ -68,9 +62,7 @@ body {
     box-shadow: var(--shadow-hover);
 }
 
-/* ========================================
-   TARJETAS DE ESTADÍSTICAS
-======================================== */
+
 
 .stat-card {
     background: white;
@@ -117,9 +109,7 @@ body {
     margin-top: 5px;
 }
 
-/* ========================================
-   CARDS DE PATENTES
-======================================== */
+
 
 .patente-card {
     background: white;
@@ -222,11 +212,9 @@ body {
     font-size: 0.7rem !important;
 }
 
-/* Estado badges ya no se usan - limpieza */
 
-/* ========================================
-   BOTÓN FLOTANTE (MOBILE)
-======================================== */
+
+
 
 .btn-floating {
     position: fixed;
@@ -253,9 +241,7 @@ body {
     color: white;
 }
 
-/* ========================================
-   MODALES
-======================================== */
+
 
 .modal-content {
     border-radius: var(--border-radius);
@@ -273,9 +259,7 @@ body {
     border-radius: 0 0 var(--border-radius) var(--border-radius);
 }
 
-/* ========================================
-   FORMULARIOS
-======================================== */
+
 
 .form-control {
     border-radius: var(--border-radius);
@@ -293,9 +277,7 @@ body {
     font-size: 1.1rem;
 }
 
-/* ========================================
-   ALERTAS Y TOASTS
-======================================== */
+
 
 .toast {
     border-radius: var(--border-radius);
@@ -308,9 +290,7 @@ body {
     margin-bottom: 0;
 }
 
-/* ========================================
-   ANIMACIONES
-======================================== */
+
 
 @keyframes fadeInUp {
     from {
@@ -343,18 +323,14 @@ body {
     animation: pulse 0.6s ease-in-out;
 }
 
-/* ========================================
-   RESPONSIVE
-======================================== */
 
-/* Mobile Small */
 @media (max-width: 576px) {
     body {
         padding-top: 70px;
     }
     
     .container-fluid {
-        padding: 0 8px 60px 8px; /* Agregado padding bottom para espacio final */
+        padding: 0 8px 60px 8px;
     }
     
     .stat-card {
@@ -381,7 +357,7 @@ body {
         font-size: 1.3rem;
     }
     
-    /* Cards de patentes: ocupan fila completa en mobile */
+
     #gridPatentes .col-6 {
         flex: 0 0 100%;
         max-width: 100%;
@@ -389,10 +365,10 @@ body {
     
     #gridPatentes {
         gap: 12px;
-        padding-bottom: 40px; /* Padding bottom reducido bajo las patentes */
+        padding-bottom: 40px;
     }
     
-    /* Stats cards con flexbox para distribución inteligente */
+
     .row.mb-4 {
         display: flex !important;
         flex-wrap: nowrap;
@@ -406,7 +382,7 @@ body {
         max-width: none;
     }
     
-    /* Ajustar contenido de stats cards en mobile */
+
     .stat-number {
         font-size: 1.1rem;
         line-height: 1.1;
@@ -423,7 +399,7 @@ body {
     }
 }
 
-/* Tablet */
+
 @media (min-width: 768px) {
     .patente-card {
         padding: 24px;
@@ -434,7 +410,7 @@ body {
     }
 }
 
-/* Desktop */
+
 @media (min-width: 992px) {
     .container-fluid {
         max-width: 1200px;
@@ -442,9 +418,7 @@ body {
     }
 }
 
-/* ========================================
-   UTILITIES
-======================================== */
+
 
 .text-shadow {
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -458,12 +432,12 @@ body {
     background: linear-gradient(135deg, var(--ypf-blue) 0%, var(--ypf-blue-light) 100%);
 }
 
-/* Loading spinner personalizado */
+
 .spinner-border.text-ypf {
     color: var(--ypf-blue) !important;
 }
 
-/* Mejoras de accesibilidad */
+
 @media (prefers-reduced-motion: reduce) {
     * {
         animation-duration: 0.01ms !important;
@@ -472,7 +446,5 @@ body {
     }
 }
 
-/* Dark mode support (futuro) */
 @media (prefers-color-scheme: dark) {
-    /* Preparado para modo oscuro */
 } 

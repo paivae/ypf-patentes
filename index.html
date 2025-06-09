@@ -5,13 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YPF - Validador de Patentes</title>
     
-    <!-- Bootstrap CSS -->
     <link href="assets/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     
-    <!-- CSS Personalizado -->
     <link href="assets/styles.css" rel="stylesheet">
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
@@ -30,7 +27,7 @@
     </script>
 </head>
 <body>
-    <!-- Navigation -->
+
     <nav class="navbar navbar-expand-lg navbar-dark bg-ypf fixed-top">
         <div class="container">
             <a class="navbar-brand fw-bold" href="#">
@@ -43,15 +40,15 @@
         </div>
     </nav>
 
-    <!-- Indicador de Conectividad -->
+
     <div id="estadoConexion" class="alert alert-warning text-center m-0 d-none">
         <i class="bi bi-wifi-off me-2"></i>
         <span>Sin conexión - Trabajando offline</span>
     </div>
 
-    <!-- Contenido Principal -->
+
     <div class="container-fluid mt-1 pt-1">
-        <!-- Header -->
+
         <div class="row mb-4">
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center">
@@ -66,7 +63,7 @@
             </div>
         </div>
 
-        <!-- Estadísticas -->
+
         <div class="row mb-4">
             <div class="col-6 col-md-3">
                 <div class="stat-card">
@@ -94,7 +91,7 @@
             </div>
         </div>
 
-        <!-- Indicador de Carga -->
+
         <div id="indicadorCarga" class="text-center mb-4" style="display: none;">
             <div class="spinner-border text-ypf" role="status">
                 <span class="visually-hidden">Sincronizando...</span>
@@ -102,12 +99,12 @@
             <p class="mt-2 text-muted small">Sincronizando datos...</p>
         </div>
 
-        <!-- Grid de Patentes -->
+
         <div id="gridPatentes" class="row g-3">
-            <!-- Las patentes se cargarán dinámicamente aquí -->
+
         </div>
 
-        <!-- Mensaje cuando no hay patentes -->
+
         <div id="mensajeSinPatentes" class="text-center py-5" style="display: none;">
             <i class="bi bi-inbox display-1 text-muted"></i>
             <h4 class="text-muted mt-3">No hay patentes registradas</h4>
@@ -118,7 +115,7 @@
         </div>
     </div>
 
-    <!-- Modal para Nueva Patente -->
+
     <div class="modal fade" id="modalNuevaPatente" tabindex="-1" aria-labelledby="modalNuevaPatenteLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -159,7 +156,7 @@
         </div>
     </div>
 
-    <!-- Modal de Acciones de Patente -->
+
     <div class="modal fade" id="modalAccionesPatente" tabindex="-1" aria-labelledby="modalAccionesPatenteLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -187,7 +184,7 @@
         </div>
     </div>
 
-    <!-- Toast para notificaciones -->
+
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
         <div id="toastNotificacion" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
@@ -201,12 +198,12 @@
         </div>
     </div>
 
-    <!-- Botón flotante para agregar (mobile) -->
+
     <button type="button" class="btn-floating d-lg-none" data-bs-toggle="modal" data-bs-target="#modalNuevaPatente">
         <i class="bi bi-plus-lg"></i>
     </button>
 
-    <!-- Scripts -->
+
     <script src="assets/bootstrap.bundle.min.js"></script>
     <script src="assets/app.js"></script>
 </body>

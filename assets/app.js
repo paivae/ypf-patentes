@@ -1,33 +1,19 @@
-// ========================================
-//        YPF PATENTES V2 - APP PRINCIPAL
-// ========================================
 
-// Configuración
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyIzGkjLqVA3gk5iYHZeNqxI9_PR0i-EdibAbPmqbg6ivGOSEzuXWG4fklbookcrxjL/exec'; // Reemplaza con tu URL nueva del deploy
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyIzGkjLqVA3gk5iYHZeNqxI9_PR0i-EdibAbPmqbg6ivGOSEzuXWG4fklbookcrxjL/exec';
 const STORAGE_KEYS = {
     PATENTES: 'ypf_patentes',
     PATENTES_VALIDADAS: 'ypf_patentes_validadas',
     DISPOSITIVO_ID: 'ypf_dispositivo_id',
     OFFLINE_QUEUE: 'ypf_offline_queue'
 };
-
-// Variables globales
 let patentes = [];
 let patentesValidadas = new Set();
 let dispositivoId = '';
 let isOnline = navigator.onLine;
 let patenteSeleccionada = '';
-
-// ========================================
-//        GESTIÓN DE DISPOSITIVO
-// ========================================
-
-// Generar ID único para el dispositivo
 function generarDispositivoId() {
     return 'device_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
 }
-
-// Obtener o crear ID del dispositivo
 function obtenerDispositivoId() {
     let id = localStorage.getItem(STORAGE_KEYS.DISPOSITIVO_ID);
     if (!id) {
@@ -36,12 +22,6 @@ function obtenerDispositivoId() {
     }
     return id;
 }
-
-// ========================================
-//        GESTIÓN DE CONEXIÓN
-// ========================================
-
-// Verificar estado de conexión
 function verificarConexion() {
     const wasOnline = isOnline;
     isOnline = navigator.onLine;
@@ -51,23 +31,14 @@ function verificarConexion() {
     if (isOnline) {
         estadoConexion.classList.add('d-none');
         if (!wasOnline) {
-            // Acabamos de conectarnos, sincronizar
             sincronizarDatosOffline();
         }
     } else {
         estadoConexion.classList.remove('d-none');
     }
 }
-
-// Eventos de conexión
 window.addEventListener('online', verificarConexion);
 window.addEventListener('offline', verificarConexion);
-
-// ========================================
-//        ALMACENAMIENTO LOCAL
-// ========================================
-
-// Guardar patentes en localStorage
 function guardarPatentesLocal() {
     try {
         localStorage.setItem(STORAGE_KEYS.PATENTES, JSON.stringify(patentes));
@@ -75,8 +46,6 @@ function guardarPatentesLocal() {
         console.error('Error guardando patentes:', error);
     }
 }
-
-// Cargar patentes desde localStorage
 function cargarPatentesLocal() {
     try {
         const data = localStorage.getItem(STORAGE_KEYS.PATENTES);
@@ -86,8 +55,6 @@ function cargarPatentesLocal() {
         return [];
     }
 }
-
-// Guardar patentes validadas localmente
 function guardarPatentesValidadas() {
     try {
         localStorage.setItem(STORAGE_KEYS.PATENTES_VALIDADAS, JSON.stringify([...patentesValidadas]));
@@ -95,8 +62,6 @@ function guardarPatentesValidadas() {
         console.error('Error guardando validaciones:', error);
     }
 }
-
-// Cargar patentes validadas
 function cargarPatentesValidadas() {
     try {
         const data = localStorage.getItem(STORAGE_KEYS.PATENTES_VALIDADAS);
@@ -106,8 +71,6 @@ function cargarPatentesValidadas() {
         return new Set();
     }
 }
-
-// Guardar estados "vista" de patentes
 function guardarPatentesVistas() {
     try {
         const vistas = patentes.filter(p => p.vista).map(p => p.patente);
@@ -116,8 +79,6 @@ function guardarPatentesVistas() {
         console.error('Error guardando vistas:', error);
     }
 }
-
-// Cargar estados "vista" de patentes
 function cargarPatentesVistas() {
     try {
         const vistas = localStorage.getItem('ypf_patentes_vistas');
@@ -129,12 +90,6 @@ function cargarPatentesVistas() {
     }
     return new Set();
 }
-
-// ========================================
-//        COMUNICACIÓN CON GOOGLE SHEETS
-// ========================================
-
-// Cargar patentes desde Google Sheets
 async function cargarPatentesDesdeSheets() {
     if (!isOnline) {
         patentes = cargarPatentesLocal();
@@ -145,8 +100,6 @@ async function cargarPatentesDesdeSheets() {
 
     try {
         mostrarIndicadorCarga(true);
-        
-        // Usar GET para evitar preflight CORS
         const url = `${GOOGLE_SCRIPT_URL}?accion=obtenerPatentes&t=${Date.now()}`;
         const response = await fetch(url, {
             method: 'GET'
@@ -173,8 +126,6 @@ async function cargarPatentesDesdeSheets() {
         mostrarIndicadorCarga(false);
     }
 }
-
-// Sincronizar datos offline
 async function sincronizarDatosOffline() {
     if (!isOnline) return;
 
@@ -189,10 +140,7 @@ async function sincronizarDatosOffline() {
             await ejecutarAccionEnServidor(accion);
         }
         
-        // Limpiar cola offline
         localStorage.removeItem(STORAGE_KEYS.OFFLINE_QUEUE);
-        
-        // Recargar datos del servidor
         await cargarPatentesDesdeSheets();
         
         mostrarNotificacion('Datos sincronizados exitosamente', 'success');
@@ -203,11 +151,8 @@ async function sincronizarDatosOffline() {
         mostrarIndicadorCarga(false);
     }
 }
-
-// Ejecutar acción en servidor
 async function ejecutarAccionEnServidor(accion) {
     try {
-        // Para acciones simples, usar GET para evitar CORS
         if (accion.accion === 'obtenerPatentes' || 
             accion.accion === 'validarPatente' || 
             accion.accion === 'marcarInexistente') {
@@ -229,7 +174,6 @@ async function ejecutarAccionEnServidor(accion) {
             }
             return result;
         }
-        // Para datos grandes (agregar patente, sincronizar), usar POST
         else {
             const response = await fetch(GOOGLE_SCRIPT_URL, {
                 method: 'POST',
@@ -247,8 +191,6 @@ async function ejecutarAccionEnServidor(accion) {
         throw error;
     }
 }
-
-// Agregar acción a cola offline
 function agregarAColaOffline(accion) {
     try {
         const cola = JSON.parse(localStorage.getItem(STORAGE_KEYS.OFFLINE_QUEUE) || '[]');
@@ -259,17 +201,13 @@ function agregarAColaOffline(accion) {
     }
 }
 
-// ========================================
-//        FUNCIONES PRINCIPALES
-// ========================================
 
-// Agregar nueva patente
 async function agregarPatente() {
     const form = document.getElementById('formNuevaPatente');
     const patenteTexto = document.getElementById('patente').value.toUpperCase().trim();
     const esDorado = document.getElementById('esDorado').checked;
 
-    // Validaciones
+
     if (!patenteTexto) {
         mostrarNotificacion('Por favor ingrese una patente', 'warning');
         return;
@@ -281,13 +219,13 @@ async function agregarPatente() {
         return;
     }
 
-    // Verificar duplicados
+
     if (patentes.find(p => p.patente === patenteTexto)) {
         mostrarNotificacion('Esta patente ya está registrada', 'warning');
         return;
     }
 
-    // Crear nueva patente
+
     const nuevaPatente = {
         patente: patenteTexto,
         fechaRegistro: new Date().toISOString().split('T')[0],
@@ -296,13 +234,13 @@ async function agregarPatente() {
         inexistente: false
     };
 
-    // Agregar localmente
+
     patentes.push(nuevaPatente);
     guardarPatentesLocal();
     renderizarPatentes();
     actualizarEstadisticas();
 
-    // Intentar guardar en servidor
+
     if (isOnline) {
         try {
             await ejecutarAccionEnServidor({
@@ -325,15 +263,13 @@ async function agregarPatente() {
         mostrarNotificacion('Patente guardada offline. Se sincronizará cuando haya conexión.', 'info');
     }
 
-    // Limpiar formulario y cerrar modal
+
     form.reset();
     const modal = bootstrap.Modal.getInstance(document.getElementById('modalNuevaPatente'));
     modal.hide();
 
     mostrarNotificacion(esDorado ? 'Camión dorado registrado' : 'Patente registrada exitosamente', 'success');
 }
-
-// Mostrar modal de acciones para una patente
 function mostrarAccionesPatente(patente) {
     patenteSeleccionada = patente;
     document.getElementById('patenteSeleccionada').textContent = patente;
@@ -341,18 +277,13 @@ function mostrarAccionesPatente(patente) {
     const modal = new bootstrap.Modal(document.getElementById('modalAccionesPatente'));
     modal.show();
 }
-
-// Copiar patente al portapapeles
 async function copiarPatente() {
     try {
         await navigator.clipboard.writeText(patenteSeleccionada);
         mostrarNotificacion('Patente copiada al portapapeles', 'success');
         
-        // Cerrar modal
         const modal = bootstrap.Modal.getInstance(document.getElementById('modalAccionesPatente'));
         modal.hide();
-        
-        // Marcar como validada localmente (atenuada)
         patentesValidadas.add(patenteSeleccionada);
         guardarPatentesValidadas();
         renderizarPatentes();
@@ -362,27 +293,22 @@ async function copiarPatente() {
         mostrarNotificacion('Error copiando patente', 'danger');
     }
 }
-
-// Validar patente (incrementar contador)
 async function validarPatente() {
     const patente = patentes.find(p => p.patente === patenteSeleccionada);
     if (!patente) return;
 
-    // Verificar si ya validó este dispositivo
+
     if (patentesValidadas.has(patenteSeleccionada)) {
         mostrarNotificacion('Ya validaste esta patente desde este dispositivo', 'warning');
         return;
     }
 
-    // Actualizar localmente
     patente.validaciones++;
     patentesValidadas.add(patenteSeleccionada);
     guardarPatentesLocal();
     guardarPatentesValidadas();
     renderizarPatentes();
     actualizarEstadisticas();
-
-    // Intentar actualizar en servidor
     if (isOnline) {
         try {
             await ejecutarAccionEnServidor({
@@ -406,35 +332,34 @@ async function validarPatente() {
         });
     }
 
-    // Cerrar modal
     const modal = bootstrap.Modal.getInstance(document.getElementById('modalAccionesPatente'));
     modal.hide();
 
     mostrarNotificacion('Patente validada exitosamente', 'success');
 }
 
-// Marcar patente como inexistente
+
 async function marcarInexistente() {
     const patente = patentes.find(p => p.patente === patenteSeleccionada);
     if (!patente) return;
 
-    // Actualizar localmente
+
     patente.marcasInexistente = (patente.marcasInexistente || 0) + 1;
     patente.inexistente = true;
-    patente.vista = true; // Marcar como vista para opacar y enviar al fondo
+    patente.vista = true;
     
-    // También agregar a patentes validadas para consistencia visual
+
     patentesValidadas.add(patente.patente);
     guardarPatentesValidadas();
     
-    // Guardar estado vista
+
     guardarPatentesVistas();
     
     guardarPatentesLocal();
     renderizarPatentes();
     actualizarEstadisticas();
 
-    // Intentar actualizar en servidor
+
     if (isOnline) {
         try {
             const resultado = await ejecutarAccionEnServidor({
@@ -442,7 +367,7 @@ async function marcarInexistente() {
                 patente: patenteSeleccionada
             });
             
-            // Actualizar contador si se recibe del servidor
+
             if (resultado.marcasInexistente) {
                 patente.marcasInexistente = resultado.marcasInexistente;
             }
@@ -460,18 +385,14 @@ async function marcarInexistente() {
         });
     }
 
-    // Cerrar modal
+
     const modal = bootstrap.Modal.getInstance(document.getElementById('modalAccionesPatente'));
     modal.hide();
 
     mostrarNotificacion('Patente marcada como inexistente', 'warning');
 }
 
-// ========================================
-//        RENDERIZADO DE INTERFAZ
-// ========================================
 
-// Renderizar patentes como cards
 function renderizarPatentes() {
     const grid = document.getElementById('gridPatentes');
     const mensajeSin = document.getElementById('mensajeSinPatentes');
@@ -484,16 +405,13 @@ function renderizarPatentes() {
     
     mensajeSin.style.display = 'none';
     
-    // Ordenar patentes: no vistas primero, luego vistas al final
+
     const patentesOrdenadas = [...patentes].sort((a, b) => {
         const aVista = patentesValidadas.has(a.patente) || a.vista;
         const bVista = patentesValidadas.has(b.patente) || b.vista;
         
-        // Primero separar por estado de vista (validadas o inexistentes marcadas)
-        if (aVista && !bVista) return 1;  // a vista va al final
-        if (!aVista && bVista) return -1; // b vista va al final
-        
-        // Dentro del mismo grupo, ordenar por: doradas primero, luego por validaciones
+        if (aVista && !bVista) return 1;
+        if (!aVista && bVista) return -1;
         if (a.esDorado && !b.esDorado) return -1;
         if (!a.esDorado && b.esDorado) return 1;
         return b.validaciones - a.validaciones;
@@ -530,7 +448,7 @@ function renderizarPatentes() {
         `;
     }).join('');
     
-    // Agregar animación de entrada
+
     const cards = grid.querySelectorAll('.patente-card');
     cards.forEach((card, index) => {
         card.style.animationDelay = `${index * 0.1}s`;
@@ -538,7 +456,7 @@ function renderizarPatentes() {
     });
 }
 
-// Actualizar estadísticas
+
 function actualizarEstadisticas() {
     const total = patentes.length;
     const validacionesTotales = patentes.reduce((sum, p) => sum + p.validaciones, 0);
@@ -551,11 +469,7 @@ function actualizarEstadisticas() {
     document.getElementById('patentesInexistentes').textContent = inexistentes;
 }
 
-// ========================================
-//        UTILIDADES
-// ========================================
 
-// Mostrar/ocultar indicador de carga
 function mostrarIndicadorCarga(mostrar) {
     const indicador = document.getElementById('indicadorCarga');
     if (indicador) {
@@ -563,7 +477,7 @@ function mostrarIndicadorCarga(mostrar) {
     }
 }
 
-// Mostrar notificaciones
+
 function mostrarNotificacion(mensaje, tipo) {
     const toast = document.getElementById('toastNotificacion');
     const toastMensaje = document.getElementById('toastMensaje');
@@ -571,7 +485,7 @@ function mostrarNotificacion(mensaje, tipo) {
     
     toastMensaje.textContent = mensaje;
     
-    // Cambiar icono según el tipo
+
     const iconos = {
         success: 'bi bi-check-circle-fill text-success',
         warning: 'bi bi-exclamation-triangle-fill text-warning',
@@ -585,35 +499,30 @@ function mostrarNotificacion(mensaje, tipo) {
     bsToast.show();
 }
 
-// ========================================
-//        INICIALIZACIÓN
-// ========================================
-
 document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar ID del dispositivo
     dispositivoId = obtenerDispositivoId();
     
-    // Cargar patentes validadas localmente
+
     patentesValidadas = cargarPatentesValidadas();
     
-    // Cargar estados vista
+
     const patentesVistas = cargarPatentesVistas();
     
-    // Verificar conexión inicial
+
     verificarConexion();
     
-    // Cargar patentes
+
     cargarPatentesDesdeSheets();
     
-    // Sincronizar estados vista después de cargar patentes
+
     setTimeout(() => {
         patentes.forEach(patente => {
-            // Restaurar estado vista si estaba guardado
+
             if (patentesVistas.has(patente.patente)) {
                 patente.vista = true;
                 patentesValidadas.add(patente.patente);
             }
-            // O si tiene marcas inexistentes pero no está marcado como vista
+
             else if (patente.marcasInexistente && patente.marcasInexistente > 0) {
                 patente.vista = true;
                 patentesValidadas.add(patente.patente);
@@ -624,7 +533,7 @@ document.addEventListener('DOMContentLoaded', function() {
         renderizarPatentes();
     }, 1000);
     
-    // Configurar formulario de patente
+
     const patenteInput = document.getElementById('patente');
     if (patenteInput) {
         patenteInput.addEventListener('input', function(e) {
@@ -632,7 +541,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Intentar sincronizar datos offline al cargar
+
     if (isOnline) {
         setTimeout(sincronizarDatosOffline, 2000);
     }
