@@ -284,8 +284,15 @@ async function copiarPatente() {
         
         const modal = bootstrap.Modal.getInstance(document.getElementById('modalAccionesPatente'));
         modal.hide();
-        patentesValidadas.add(patenteSeleccionada);
-        guardarPatentesValidadas();
+        
+        // Marcar la patente como vista (no validada)
+        const patente = patentes.find(p => p.patente === patenteSeleccionada);
+        if (patente) {
+            patente.vista = true;
+            guardarPatentesLocal();
+            guardarPatentesVistas();
+        }
+        
         renderizarPatentes();
         
     } catch (error) {
